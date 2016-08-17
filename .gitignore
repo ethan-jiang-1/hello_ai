@@ -1,0 +1,15 @@
+var
+venv
+tmp
+log
+*.log
+*.log.*
+*.pyc
+*.db
+*.orig
+.tmp
+.DS_Store
+!.gitkeep
+!log/.gitkeep
+.idea
+scripts/ansible/.ssh/*.key
