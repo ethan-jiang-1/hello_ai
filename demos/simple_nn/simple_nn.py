@@ -23,7 +23,7 @@ new_set_output = array([1])  # we are expection this result
 
 bool_print_training = False
 
-def gml(obj):
+def get_matrix_line(obj):
     strobj = str(obj)
     line = strobj.replace("\n","\t")
     return line
@@ -31,9 +31,9 @@ def gml(obj):
 
 def print_details_core(inputs,weights, outputs, msg):
     line = msg + "\n"
-    line += "inputs:  \t" + gml(inputs) + "\n"
-    line += "weights: \t" + gml(weights) + "\n"
-    line += "outputs: \t" + gml(outputs) + "\n"
+    line += "inputs:  \t" + get_matrix_line(inputs) + "\n"
+    line += "weights: \t" + get_matrix_line(weights) + "\n"
+    line += "outputs: \t" + get_matrix_line(outputs) + "\n"
     print(line)
 
 
@@ -44,7 +44,7 @@ def print_details_training(inputs,weights,outputs,iteration_num,msg):
 
 
 def print_details_new(inputs,weights,outputs,msg):
-    msg_all = "new set input/output 100: " + msg
+    msg_all = "new set input/output [1,0,0]: " + msg
     print_details_core(inputs,weights,outputs,msg_all)
 
 
@@ -53,37 +53,43 @@ def get_outputs(inputs,weights):
     return 1 / (1 + exp(-(dot(inputs, weights))))
 
 
-def training(iteration_max):
+def training(synaptic_weights, training_num):
 
-    synaptic_weights = 2 * random.random((3,1)) -1   # an weights of 3 vectors [[r1],[r2],[r3]] - random at beginging
+
+    print_details_training(training_set_inputs,synaptic_weights,training_set_outputs,0,"initialization: -- try to change weight to get expected outputs like training_set_outputs")
+
+    for iteration in xrange(training_num):
+
+        #pdb.set_trace()
+
+        #the output based on current weights on known traning_set_input
+        tmp_outputs = get_outputs(training_set_inputs, synaptic_weights) #an array of 4 [[o1],[o2],[o3],[o4]]
+
+        #Adjust the weights
+        delta_outputs = (training_set_outputs - tmp_outputs) * tmp_outputs * (1 - tmp_outputs)  # an array of 4 [[do1],[do2],[do3],[do4]]
+        adjust_weights = dot(training_set_inputs.T, delta_outputs)  # an array of 3 [[dw1],[dw2],[dw3]]
+        synaptic_weights += adjust_weights
+
+        print_details_training(training_set_inputs,synaptic_weights,tmp_outputs,iteration,"")
+
+
+    return synaptic_weights
+
+
+def main():
+    random.seed(1)
+
+    synaptic_weights = 2 * random.random((3,1)) -1   # an weights of 3 vectors [[w1],[w2],[w3]] - random at beginging
 
     #the output for new_set_input ([1,0,0]) - initialized
     new_temp_output  = get_outputs(new_set_input, synaptic_weights)
     print_details_new(new_set_input,synaptic_weights,new_temp_output,"The initial:")
 
-
-    print_details_training(training_set_inputs,synaptic_weights,training_set_outputs,0,"initialization: -- try to change weight to get expected outputs like training_set_outputs")
-
-    for iteration in xrange(iteration_max):
-
-        #the output based on current weights on known traning_set_input
-        tmp_outputs = get_outputs(training_set_inputs, synaptic_weights)
-
-        #Adjust the weights
-        adjust_weights = dot(training_set_inputs.T, (training_set_outputs - tmp_outputs) * tmp_outputs * (1 - tmp_outputs))
-        synaptic_weights += adjust_weights
-
-        print_details_training(training_set_inputs,synaptic_weights,tmp_outputs,iteration,"")
+    training_num = 100000
+    training(synaptic_weights, training_num)
 
     #the output for new_set_input ([1,0,0]) - the finial
     new_temp_output  = get_outputs(new_set_input, synaptic_weights)
-    print_details_new(new_set_input,synaptic_weights,new_temp_output,"The final (after {0} times training):".format(iteration))
-
-
-
-
-def main():
-    random.seed(1)
-    training(100000)
+    print_details_new(new_set_input,synaptic_weights,new_temp_output,"The final (after {0} times training):".format(training_num))
 
 main()
