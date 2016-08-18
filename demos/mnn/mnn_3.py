@@ -34,12 +34,12 @@ class NeuralNetwork():
     def train(self, training_set_inputs, training_set_outputs, number_of_training_iterations):
         for iteration in xrange(number_of_training_iterations):
             # Pass the training set through our neural network
-            output_from_layer_1, output_from_layer_2, output_from_layer3 = self.think(training_set_inputs)
+            output_from_layer_1, output_from_layer_2, output_from_layer_3 = self.think(training_set_inputs)
 
             # Calculate the error for layer 2 (The difference between the desired output
             # and the predicted output).
-            layer3_error = training_set_outputs - output_from_layer3
-            layer3_delta = layer3_error * self.__sigmoid_derivative(output_from_layer3)
+            layer3_error = training_set_outputs - output_from_layer_3
+            layer3_delta = layer3_error * self.__sigmoid_derivative(output_from_layer_3)
 
             layer2_error = layer3_delta.dot(self.layer3.synaptic_weights.T)
             layer2_delta = layer2_error * self.__sigmoid_derivative(output_from_layer_2)
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     # Create layer 1 (4 neurons, each with 3 inputs)
     layer1 = NeuronLayer(4, 3)
 
-    # Create layer 1 (4 neurons, each with 3 inputs)
+    # Create layer 2 (5 neurons, each with 4 inputs)
     layer2 = NeuronLayer(5, 4)
 
     # Create layer 3 (a single neuron with 4 inputs)

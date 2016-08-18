@@ -12,9 +12,11 @@ class NeuronLayer():
 
 
 class NeuralNetwork():
-    def __init__(self, layer1, layer2):
+    def __init__(self, layer1, layer2, layer3, layer4):
         self.layer1 = layer1
         self.layer2 = layer2
+        self.layer3 = layer3
+        self.layer4 = layer4 
 
     # The Sigmoid function, which describes an S shaped curve.
     # We pass the weighted sum of the inputs through this function to
@@ -33,11 +35,17 @@ class NeuralNetwork():
     def train(self, training_set_inputs, training_set_outputs, number_of_training_iterations):
         for iteration in xrange(number_of_training_iterations):
             # Pass the training set through our neural network
-            output_from_layer_1, output_from_layer_2 = self.think(training_set_inputs)
+            output_from_layer_1, output_from_layer_2, output_from_layer_3, output_from_layer_4 = self.think(training_set_inputs)
 
             # Calculate the error for layer 2 (The difference between the desired output
             # and the predicted output).
-            layer2_error = training_set_outputs - output_from_layer_2
+            layer4_error = training_set_outputs - output_from_layer_4
+            layer4_delta = layer4_error * self.__sigmoid_derivative(output_from_layer_4)
+
+            layer3_error = layer4_delta.dot(self.layer4.synaptic_weights.T)
+            layer3_delta = layer3_error * self.__sigmoid_derivative(output_from_layer_3)
+
+            layer2_error = layer3_delta.dot(self.layer3.synaptic_weights.T)
             layer2_delta = layer2_error * self.__sigmoid_derivative(output_from_layer_2)
 
             # Calculate the error for layer 1 (By looking at the weights in layer 1,
@@ -48,23 +56,33 @@ class NeuralNetwork():
             # Calculate how much to adjust the weights by
             layer1_adjustment = training_set_inputs.T.dot(layer1_delta)
             layer2_adjustment = output_from_layer_1.T.dot(layer2_delta)
+            layer3_adjustment = output_from_layer_2.T.dot(layer3_delta)
+            layer4_adjustment = output_from_layer_3.T.dot(layer4_delta)
 
             # Adjust the weights.
             self.layer1.synaptic_weights += layer1_adjustment
             self.layer2.synaptic_weights += layer2_adjustment
+            self.layer3.synaptic_weights += layer3_adjustment
+            self.layer4.synaptic_weights += layer4_adjustment
 
     # The neural network thinks.
     def think(self, inputs):
         output_from_layer1 = self.__sigmoid(dot(inputs, self.layer1.synaptic_weights))
         output_from_layer2 = self.__sigmoid(dot(output_from_layer1, self.layer2.synaptic_weights))
-        return output_from_layer1, output_from_layer2
+        output_from_layer3 = self.__sigmoid(dot(output_from_layer2, self.layer3.synaptic_weights))
+        output_from_layer4 = self.__sigmoid(dot(output_from_layer3, self.layer4.synaptic_weights))
+        return output_from_layer1, output_from_layer2, output_from_layer3, output_from_layer4
 
     # The neural network prints its weights
     def print_weights(self):
         print("    Layer 1 (4 neurons, each with 3 inputs): ")
         print(self.layer1.synaptic_weights)
-        print("    Layer 2 (1 neuron, with 4 inputs):")
+        print("    Layer 2 (5 neuron, with 4 inputs):")
         print(self.layer2.synaptic_weights)
+        print("    Layer 3 (6 neuron, with 5 inputs):")
+        print(self.layer3.synaptic_weights)
+        print("    Layer 4 (1 neuron, with 6 inputs):")
+        print(self.layer4.synaptic_weights)
 
 if __name__ == "__main__":
 
@@ -74,11 +92,17 @@ if __name__ == "__main__":
     # Create layer 1 (4 neurons, each with 3 inputs)
     layer1 = NeuronLayer(4, 3)
 
-    # Create layer 2 (a single neuron with 4 inputs)
-    layer2 = NeuronLayer(1, 4)
+    # Create layer 2 (5 neurons, each with 4 inputs)
+    layer2 = NeuronLayer(5, 4)
+
+    # Create layer 3 (6 neurons with 5 inputs)
+    layer3 = NeuronLayer(6, 5)    
+
+    # Create layer 4 (single neuron with 5 inputs)
+    layer4 = NeuronLayer(1, 6)
 
     # Combine the layers to create a neural network
-    neural_network = NeuralNetwork(layer1, layer2)
+    neural_network = NeuralNetwork(layer1, layer2, layer3, layer4)
 
     print("Stage 1) Random starting synaptic weights: ")
     neural_network.print_weights()
@@ -99,5 +123,5 @@ if __name__ == "__main__":
     # Test the neural network with a new situation.
     print("")
     print("Stage 3) Considering a new situation [1, 1, 0] -> ?: ")
-    hidden_state, output = neural_network.think(array([1, 1, 0]))
+    hs1, hs2 , hs3, output = neural_network.think(array([1, 1, 0]))
     print(output)
