@@ -25,9 +25,22 @@ from sklearn import datasets, svm, metrics
 import pickle
 import os
 
-def get_pickle_filename():
+def get_temp_dir():
     cwd = os.getcwd()
-    filename  = os.path.normpath(cwd + "/../temp/svm.pickle")
+    paths = cwd.split('/')
+    root_paths = []
+    for path in paths:
+        if path == 'hello_ai':
+            root_paths.append(path)
+            break
+        root_paths.append(path)
+    dir_tmp = '/'.join(root_paths) + "/temp"
+    return dir_tmp
+
+def get_pickle_filename():
+    #import pdb; pdb.set_trace()
+    temp_dir = get_temp_dir()
+    filename  = os.path.normpath(temp_dir + "/svm.pickle.tmp")
     return filename
 
 def save_to_file(classifier):

@@ -13,3 +13,5 @@ log
 !log/.gitkeep
 .idea
 scripts/ansible/.ssh/*.key
+
+*.tmp
