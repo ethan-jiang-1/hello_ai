@@ -67,7 +67,7 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
     b = int2bin(b_int)
 
     print("")
-    print("Try: {0} + {1} with trained plus ".format(a_int,b_int))
+    print("Test: {0} + {1} with trained plus ".format(a_int,b_int))
     print("  a: " + str(a))
     print("  b: " + str(b))
 
@@ -76,6 +76,11 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
 
     layer_1_values = list()
     layer_1_values.append(np.zeros(hidden_dim))
+
+    print("init")
+    print("  layer_1(vlen): " + str(len(layer_1_values)))
+    print("  layer_1(data): " + str(layer_1_values))
+    print("  layer_2(bin): " + str(d))
 
     # moving along the positions in the binary encoding
     for position in range(binary_dim):
@@ -98,7 +103,8 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
         print("loop: " + str(position))
         print("  layer_0: " + str(X))
         print("  layer_1: " + str(layer_1))
-        print("  layer_1(val):" + str(layer_1_values))
+        print("  layer_1(vlen): " + str(len(layer_1_values)))
+        print("  layer_1(data): " + str(layer_1_values))
         print("  layer_2: " + str(layer_1))
         print("  layer_2(bin): " + str(d))
 
@@ -107,6 +113,58 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
     print("result: {0} + {1} = {2}".format(a_int,b_int,out_int))
     print("")
     return out_int
+
+
+def trained_plus_one(a_int,b_int,synapse_0,synapse_1,synapse_h):
+
+    a = int2bin(a_int)
+    b = int2bin(b_int)
+
+    print("")
+    print("Test: {0} + {1} with trained plus (one layer)".format(a_int,b_int))
+    print("  a: " + str(a))
+    print("  b: " + str(b))
+
+    # where we'll store our best guess (binary encoded)
+    d = np.zeros_like(a)
+
+    layer_1_values = np.zeros(hidden_dim)
+
+    print("init")
+    print("  layer_1: " + str(layer_1_values))
+    print("  layer_2(bin): " + str(d))
+
+    # moving along the positions in the binary encoding
+    for position in range(binary_dim):
+
+        # generate input and output
+        X = np.array([[a[binary_dim - position - 1],b[binary_dim - position - 1]]])
+
+        # hidden layer (input ~+ prev_hidden)
+        layer_1 = sigmoid(np.dot(X,synapse_0) + np.dot(layer_1_values,synapse_h))
+
+        # output layer (new binary representation)
+        layer_2 = sigmoid(np.dot(layer_1,synapse_1))
+
+        # decode estimate so we can print it out
+        d[binary_dim - position - 1] = np.round(layer_2[0][0])
+
+        # store hidden layer so we can use it in the next timestep
+        layer_1_values = copy.deepcopy(layer_1)
+
+        print("loop: " + str(position))
+        print("  layer_0: " + str(X))
+        print("  layer_1: " + str(layer_1))
+        print("  layer_1(data): " + str(layer_1_values))
+        print("  layer_2: " + str(layer_1))
+        print("  layer_2(bin): " + str(d))
+
+    out_int = bin2int(d)
+
+    print("result: {0} + {1} = {2}".format(a_int,b_int,out_int))
+    print("")
+    return out_int
+
 
 def validate_trained_plus(synapse_0,synapse_1,synapse_h):
     print("##Validate trained plus:")
@@ -125,6 +183,10 @@ def validate_trained_plus(synapse_0,synapse_1,synapse_h):
     trained_plus(109,16,synapse_0,synapse_1,synapse_h)
     trained_plus(200,55,synapse_0,synapse_1,synapse_h)
 
+
+    trained_plus_one(8,8,synapse_0,synapse_1,synapse_h)
+    trained_plus_one(13,3,synapse_0,synapse_1,synapse_h)
+    trained_plus_one(199,56,synapse_0,synapse_1,synapse_h)
 
 
 def rnn_run():
