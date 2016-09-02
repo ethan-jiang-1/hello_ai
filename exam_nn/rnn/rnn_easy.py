@@ -59,9 +59,17 @@ def report_result(j,overallError,d,c,a_int,b_int):
     print("")
 
 
+#flags = ""
+
 def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
+
     a = int2bin(a_int)
     b = int2bin(b_int)
+
+    print("")
+    print("Try: {0} + {1} with trained plus ".format(a_int,b_int))
+    print("  a: " + str(a))
+    print("  b: " + str(b))
 
     # where we'll store our best guess (binary encoded)
     d = np.zeros_like(a)
@@ -87,17 +95,34 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
         # store hidden layer so we can use it in the next timestep
         layer_1_values.append(copy.deepcopy(layer_1))
 
+        print("loop: " + str(position))
+        print("  layer_0: " + str(X))
+        print("  layer_1: " + str(layer_1))
+        print("  layer_2: " + str(layer_1))
+        print("  layer_2(bin): " + str(d))
+
     out_int = bin2int(d)
 
-    print("plus: {0} + {1} = {2}".format(a_int,b_int,out_int))
+    print("result: {0} + {1} = {2}".format(a_int,b_int,out_int))
+    print("")
     return out_int
 
 def validate_trained_plus(synapse_0,synapse_1,synapse_h):
+    print("##Validate trained plus:")
+    print("synapse_0")
+    print(str(synapse_0))
+    print("synapse_1")
+    print(str(synapse_1))
+    print("synapse_h")
+    print(str(synapse_h))
+    print("")
+    trained_plus(6,6,synapse_0,synapse_1,synapse_h)
     trained_plus(1,2,synapse_0,synapse_1,synapse_h)
     trained_plus(11,3,synapse_0,synapse_1,synapse_h)
     trained_plus(19,6,synapse_0,synapse_1,synapse_h)
     trained_plus(79,86,synapse_0,synapse_1,synapse_h)
     trained_plus(109,16,synapse_0,synapse_1,synapse_h)
+    trained_plus(200,55,synapse_0,synapse_1,synapse_h)
 
 
 
@@ -115,6 +140,7 @@ def rnn_run():
     synapse_h_update = np.zeros_like(synapse_h)
 
     # training logic
+    print("##Training: 10000 times...")
     for j in range(10001):
 
         # generate a simple addition problem (a + b = c)
@@ -194,6 +220,8 @@ def rnn_run():
         if(j % 1000 == 0):
             report_result(j,overallError,d,c,a_int,b_int)
 
+    print("")
+    print("## Testing:...")
     validate_trained_plus(synapse_0,synapse_1,synapse_h)
 
 
