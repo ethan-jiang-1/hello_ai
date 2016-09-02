@@ -98,6 +98,7 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
         print("loop: " + str(position))
         print("  layer_0: " + str(X))
         print("  layer_1: " + str(layer_1))
+        print("  layer_1(val):" + str(layer_1_values))
         print("  layer_2: " + str(layer_1))
         print("  layer_2(bin): " + str(d))
 
