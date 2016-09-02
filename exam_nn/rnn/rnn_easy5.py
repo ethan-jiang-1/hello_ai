@@ -24,7 +24,7 @@ def sigmoid_output_to_derivative(output):
 binary_dim = 8
 largest_number = pow(2,binary_dim)
 # input variables
-alpha = 0.1
+alpha = 0.5
 input_dim = 2
 hidden_dim = 16
 output_dim = 1
@@ -47,6 +47,8 @@ def bin2int(bin):
         out_int += x*pow(2,index)
     return out_int
 
+
+
 def report_sum(a_int,b_int,out_int):
     result_lead = "x"
     result_msg = "result does not matched yet"
@@ -64,9 +66,7 @@ def report_result(j,overallError,d,c,a_int,b_int):
     print("Pred:" + str(d))
     print("True:" + str(c))
     out_int = bin2int(d)
-
     report_sum(a_int,b_int,out_int)
-
 
 #flags = ""
 
@@ -118,7 +118,6 @@ def trained_plus(a_int,b_int,synapse_0,synapse_1,synapse_h):
         print("  layer_2(bin): " + str(d))
 
     out_int = bin2int(d)
-
     report_sum(a_int,b_int,out_int)
     return out_int
 
@@ -168,7 +167,6 @@ def trained_plus_one(a_int,b_int,synapse_0,synapse_1,synapse_h):
         print("  layer_2(bin): " + str(d))
 
     out_int = bin2int(d)
-
     report_sum(a_int,b_int,out_int)
     return out_int
 
