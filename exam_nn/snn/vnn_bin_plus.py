@@ -15,7 +15,7 @@ class NeuronLayer():
 
 class NeuralNetwork():
     def __init__(self, layers):
-        self.layers = layers 
+        self.layers = layers
         self.end_layer = len(layers)   # inputs -> layer 1 -> layer 2 -> ..... -> layer N (the output)
 
     # The Sigmoid function, which describes an S shaped curve.
@@ -34,25 +34,28 @@ class NeuralNetwork():
     # Adjusting the synaptic weights each time.
     def train(self, training_set_inputs, training_set_outputs, number_of_training_iterations):
         for iteration in xrange(number_of_training_iterations):
+
+            #import pdb;pdb.set_trace()
+
             # Pass the training set through our neural network
             output_layers = self.think(training_set_inputs)
 
             layer_deltas = {}
-            for i in range(self.end_layer, 0, -1):  
-                error = None  
+            for i in range(self.end_layer, 0, -1):
+                error = None
                 delta = None
-                adjustment = None 
+                adjustment = None
                 if i == self.end_layer:
                     error = training_set_outputs - output_layers[self.end_layer]
-                    delta = error * self.__sigmoid_derivative(output_layers[i]) 
+                    delta = error * self.__sigmoid_derivative(output_layers[i])
                     adjustment = output_layers[i-1].T.dot(delta)
-                elif i == 1 : 
+                elif i == 1 :
                     error = layer_deltas[i+1].dot(self.layers[i+1].synaptic_weights.T)
-                    delta = error * self.__sigmoid_derivative(output_layers[i]) 
+                    delta = error * self.__sigmoid_derivative(output_layers[i])
                     adjustment = training_set_inputs.T.dot(delta)
                 else:
                     error = layer_deltas[i+1].dot(self.layers[i+1].synaptic_weights.T)
-                    delta = error * self.__sigmoid_derivative(output_layers[i]) 
+                    delta = error * self.__sigmoid_derivative(output_layers[i])
                     adjustment = output_layers[i-1].T.dot(delta)
 
                 layer_deltas[i] = delta
@@ -62,21 +65,21 @@ class NeuralNetwork():
 
     # The neural network thinks.
     def think(self, inputs):
-        outputs = {} 
-        for i in range(1, self.end_layer+1):  
-            if i == 1: 
+        outputs = {}
+        for i in range(1, self.end_layer+1):
+            if i == 1:
                 output = self.__sigmoid(dot(inputs,self.layers[i].synaptic_weights))
             else:
                 output = self.__sigmoid(dot(outputs[i-1],self.layers[i].synaptic_weights))
             outputs[i] = output
-        return outputs 
+        return outputs
 
     # The neural network prints its weights
     def print_weights(self):
-        for i in range(1, self.end_layer+1):  
+        for i in range(1, self.end_layer+1):
             layer = self.layers[i]
-            print("  Layer {0} ({1} neurons, each with {2} inputs):".format(i,layer.number_of_neurons, layer.number_of_inputs_per_neuron)) 
-            print(layer.synaptic_weights)       
+            print("  Layer {0} ({1} neurons, each with {2} inputs):".format(i,layer.number_of_neurons, layer.number_of_inputs_per_neuron))
+            print(layer.synaptic_weights)
 
 if __name__ == "__main__":
 
@@ -84,11 +87,10 @@ if __name__ == "__main__":
     random.seed(1)
 
 
-    layers = {} 
+    layers = {}
     layers[1] = NeuronLayer(8, 8)   #the first layer -- 8 neurons 8 inputs
     layers[2] = NeuronLayer(8, 8)
-    layers[3] = NeuronLayer(16, 8) 
-    layers[4] = NeuronLayer(8, 16)   #the last one layer -- the output, 8 neourons, 16 inputs  
+    layers[3] = NeuronLayer(8, 8)   #the last one layer -- the output, 8 neourons, 16 inputs
 
 
     # Combine the layers to create a neural network
@@ -99,8 +101,21 @@ if __name__ == "__main__":
 
     # The training set. We have 7 examples, each consisting of 3 input values
     # and 1 output value.
-    training_set_inputs = array([[0, 0, 1], [0, 1, 1], [1, 0, 1], [0, 1, 0], [1, 0, 0], [1, 1, 1], [0, 0, 0]])
-    training_set_outputs = array([[0, 1, 1, 1, 1, 0, 0]]).T
+    training_set_inputs = array([[0,0,0,0,0,0, 0, 1],
+                                 [0,0,0,0,0,0, 1, 1],
+                                 [0,0,0,0,0,1, 0, 1],
+                                 [0,0,0,0,0,0, 1, 0],
+                                 [0,0,0,0,0,1, 0, 0],
+                                 [0,0,0,0,0,1, 1, 1],
+                                 [0,0,0,0,0,0, 0, 0]])
+
+    training_set_outputs= array([[0,0,0,0,0,0, 0, 0],
+                                 [0,0,0,0,0,0, 0, 1],
+                                 [0,0,0,0,0,0, 0, 1],
+                                 [0,0,0,0,0,0, 0, 1],
+                                 [0,0,0,0,0,0, 0, 1],
+                                 [0,0,0,0,0,0, 0, 0],
+                                 [0,0,0,0,0,0, 0, 0]]).T
 
     # Train the neural network using the training set.
     # Do it 60,000 times and make small adjustments each time.
@@ -113,5 +128,6 @@ if __name__ == "__main__":
     # Test the neural network with a new situation.
     print("")
     print("Stage 3) Considering a new situation [1, 1, 0] -> ?: ")
-    outputs = neural_network.think(array([1, 1, 0]))
+    #outputs = neural_network.think(array([0,0,0,0,0,1,1,0]))
+    outputs = neural_network.think(array([0,0,0,0,0,0,0,0]))
     print(outputs[len(layers)])
