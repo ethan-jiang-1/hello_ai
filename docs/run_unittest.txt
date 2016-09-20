@@ -1,0 +1,25 @@
+make sure you have python virtual environment setup:
+
+see init_dev.txt
+
+and double check if you have all the pip package installed
+if you are not very sure, just run again:
+
+$ pip install -r requirements.txt
+
+
+Run all the unitest:
+
+$nosetests
+
+Run all tests under certain folder
+$nosetests subfolder_name
+
+
+Run a particular test
+$nosetest subfolder_name.test_case.py
+
+key nosetest options
+1) -s  all stdout direct to console
+2) -pdb stop and debug if there is a crash
+
