@@ -1,0 +1,2 @@
+﻿1. accTrain/accTest 是画圆和画四边形的训练和测试数据.
+2. TapTrain/TapTest 是拍动作的训练和测试数据.
